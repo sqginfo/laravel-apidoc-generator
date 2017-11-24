@@ -52,6 +52,7 @@ class LaravelGenerator extends AbstractGenerator
      */
     public function processRoute($route, $bindings = [], $headers = [], $withResponse = true)
     {
+        // teste teste
         $content = '';
 
         $routeAction = $route->getAction();
