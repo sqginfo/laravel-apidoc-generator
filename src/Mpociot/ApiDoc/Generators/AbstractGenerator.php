@@ -79,8 +79,25 @@ abstract class AbstractGenerator
      */
     protected function getParameters($routeData, $routeAction, $bindings)
     {
+
+        $getRulesOriginal = array();
+
+        $original = $this->getRouteRules($routeAction['uses'], $bindings) ;
+
+        foreach ($original as $name => $value)
+        {
+            if ( $this->contains('.*.', $name ) )
+            {
+                $getRulesOriginal[$name] = explode( '|', $value ) ;
+            }
+        }
+
         $validator = Validator::make([], $this->getRouteRules($routeAction['uses'], $bindings));
-        foreach ($validator->getRules() as $attribute => $rules) {
+
+        $mergedRules = array_merge( $validator->getRules() , $getRulesOriginal ) ;
+
+        foreach ($mergedRules as $attribute => $rules) {
+
             $attributeData = [
                 'required' => false,
                 'type' => null,
@@ -89,12 +106,18 @@ abstract class AbstractGenerator
                 'description' => [],
             ];
             foreach ($rules as $ruleName => $rule) {
+
                 $this->parseRule($rule, $attribute, $attributeData, $routeData['id']);
             }
             $routeData['parameters'][$attribute] = $attributeData;
         }
 
         return $routeData;
+    }
+
+    public function contains($needle, $haystack)
+    {
+        return strpos($haystack, $needle) !== false;
     }
 
     /**
@@ -106,7 +129,7 @@ abstract class AbstractGenerator
      */
     protected function getRouteResponse($route, $bindings, $headers = [])
     {
-        $uri = $this->addRouteModelBindings($route, $bindings);
+        $uri = $this->addRouteModelBindings($route, $bindings)."?hash=g6VpzdAlYaPY5FeuDJpqVkpoNZMgvqymaQrxIsQK";
 
         $methods = $this->getMethods($route);
 
@@ -498,10 +521,12 @@ abstract class AbstractGenerator
         // The format for specifying validation rules and parameters follows an
         // easy {rule}:{parameters} formatting convention. For instance the
         // rule "Max:3" states that the value may only be three letters.
+
         if (strpos($rules, ':') !== false) {
             list($rules, $parameter) = explode(':', $rules, 2);
 
             $parameters = $this->parseParameters($rules, $parameter);
+
         }
 
         return [strtolower(trim($rules)), $parameters];

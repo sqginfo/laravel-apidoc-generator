@@ -142,8 +142,8 @@ class LaravelGenerator extends AbstractGenerator
         $kernel->terminate($request, $response);
 
         if (file_exists($file = App::bootstrapPath().'/app.php')) {
-            $app = require $file;
-            $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+            //$app = require $file;
+            //$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
         }
 
         return $response;

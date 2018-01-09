@@ -79,7 +79,7 @@ class GenerateDocumentation extends Command
             return false;
         }
 
-        $generator->prepareMiddleware($this->option('useMiddlewares'));
+//        $generator->prepareMiddleware($this->option('useMiddlewares'));
 
         if ($this->option('router') === 'laravel') {
             $parsedRoutes = $this->processLaravelRoutes($generator, $allowedRoutes, $routePrefix, $middleware);
@@ -259,8 +259,10 @@ class GenerateDocumentation extends Command
         $bindings = $this->getBindings();
         $parsedRoutes = [];
         foreach ($routes as $route) {
+
             if (in_array($route->getName(), $allowedRoutes) || str_is($routePrefix, $generator->getUri($route)) || in_array($middleware, $route->middleware())) {
                 if ($this->isValidRoute($route) && $this->isRouteVisibleForDocumentation($route->getAction()['uses'])) {
+
                     $parsedRoutes[] = $generator->processRoute($route, $bindings, $this->option('header'), $withResponse);
                     $this->info('Processed route: ['.implode(',', $generator->getMethods($route)).'] '.$generator->getUri($route));
                 } else {
@@ -286,6 +288,7 @@ class GenerateDocumentation extends Command
         $bindings = $this->getBindings();
         $parsedRoutes = [];
         foreach ($routes as $route) {
+
             if (empty($allowedRoutes) || in_array($route->getName(), $allowedRoutes) || str_is($routePrefix, $route->uri()) || in_array($middleware, $route->middleware())) {
                 if ($this->isValidRoute($route) && $this->isRouteVisibleForDocumentation($route->getAction()['uses'])) {
                     $parsedRoutes[] = $generator->processRoute($route, $bindings, $this->option('header'), $withResponse);
